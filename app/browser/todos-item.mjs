@@ -1,10 +1,11 @@
 
 /* globals customElements */
 import CustomElement from '@enhance-labs/custom-element'
+import MorphdomMixin from '@enhance/morphdom-mixin'
 import API from './api.mjs'
 const api = API()
 
-export default class TodosItem extends CustomElement {
+export default class TodosItem extends MorphdomMixin(CustomElement) {
   constructor() {
     super()
     this.api = api
@@ -31,31 +32,33 @@ export default class TodosItem extends CustomElement {
     ]
   }
 
-  titleChanged(value) {
-    if (this.textInput) {
-      this.textInput.value = value
-    }
-  }
+  // change handlers only needed if morphdom is not used
 
-  keyChanged(value) {
-    if (this.updateForm && this.deleteForm) {
-      this.updateForm.action = `/todos/${value}`
-      this.updateForm.querySelector('input[type=hidden][name=key]').value = value
-      this.deleteForm.action = `/todos/${value}/delete`
-      this.deleteForm.querySelector('input[type=hidden]').value = value
-    }
-  }
+  // titleChanged(value) {
+  //   if (this.textInput) {
+  //     this.textInput.value = value
+  //   }
+  // }
 
-  completedChanged(value) {
-    if (this.checkboxInput) {
-      if (value === 'true') {
-        this.checkboxInput.checked = true
-      }
-      else {
-        this.checkboxInput.checked = false
-      }
-    }
-  }
+  // keyChanged(value) {
+  //   if (this.updateForm && this.deleteForm) {
+  //     this.updateForm.action = `/todos/${value}`
+  //     this.updateForm.querySelector('input[type=hidden][name=key]').value = value
+  //     this.deleteForm.action = `/todos/${value}/delete`
+  //     this.deleteForm.querySelector('input[type=hidden]').value = value
+  //   }
+  // }
+
+  // completedChanged(value) {
+  //   if (this.checkboxInput) {
+  //     if (value === 'true') {
+  //       this.checkboxInput.checked = true
+  //     }
+  //     else {
+  //       this.checkboxInput.checked = false
+  //     }
+  //   }
+  // }
 
   shouldCallAPI(e) {
     // Cuts down on unnecessary API calls
