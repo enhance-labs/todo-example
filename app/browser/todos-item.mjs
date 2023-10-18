@@ -12,9 +12,9 @@ export default class TodosItem extends CustomElement {
     this.updateChecked = this.updateChecked.bind(this)
     this.destroy = this.destroy.bind(this)
     this.shouldCallAPI = this.shouldCallAPI.bind(this)
-    const key = this.getAttribute('key')
-    this.updateForm = this.querySelector(`form[action='/todos/${key}']`)
-    this.deleteForm = this.querySelector(`form[action='/todos/${key}/delete']`)
+
+    this.updateForm = this.querySelector('.update-todo')
+    this.deleteForm = this.querySelector('.delete-todo')
     this.updateForm.addEventListener('submit', this.update)
     this.deleteForm.addEventListener('submit', this.destroy)
     this.checkboxInput = this.querySelector('input[type="checkbox"]')
@@ -22,7 +22,6 @@ export default class TodosItem extends CustomElement {
     this.textInput = this.querySelector('input[type="text"]')
     this.textInput.addEventListener('focusout', this.shouldCallAPI)
   }
-
 
   static get observedAttributes() {
     return [
@@ -33,19 +32,28 @@ export default class TodosItem extends CustomElement {
   }
 
   titleChanged(value) {
-    this.textInput.value = value
+    if (this.textInput) {
+      this.textInput.value = value
+    }
   }
 
   keyChanged(value) {
-    console.log('key changed', {value})
+    if (this.updateForm && this.deleteForm) {
+      this.updateForm.action = `/todos/${value}`
+      this.updateForm.querySelector('input[type=hidden][name=key]').value = value
+      this.deleteForm.action = `/todos/${value}/delete`
+      this.deleteForm.querySelector('input[type=hidden]').value = value
+    }
   }
 
   completedChanged(value) {
-    if (value === 'true') {
-      this.checkboxInput.checked = true
-    }
-    else {
-      this.checkboxInput.checked = false
+    if (this.checkboxInput) {
+      if (value === 'true') {
+        this.checkboxInput.checked = true
+      }
+      else {
+        this.checkboxInput.checked = false
+      }
     }
   }
 
@@ -87,6 +95,7 @@ export default class TodosItem extends CustomElement {
       flex
       flex-grow
       items-center
+      update-todo
      "
      method="POST"
     >
@@ -119,6 +128,7 @@ export default class TodosItem extends CustomElement {
     </form>
 
     <form
+      class="delete-todo"
       action="/todos/${key}/delete"
       method="POST"
     >
