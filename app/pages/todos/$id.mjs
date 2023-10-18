@@ -23,5 +23,7 @@ export default function Html ({ html, state }) {
   <enhance-submit-button style="float: right"><span slot="label">Save</span></enhance-submit-button>
   </enhance-fieldset>
 </enhance-form>
-</enhance-page-container>`
+</enhance-page-container>
+<script src="/_public/browser/todos.mjs" type="module"></script>
+`
 }

@@ -1,5 +1,13 @@
-export default function LayoutContainer({ html }) {
-  return html`
+/* globals customElements */
+import CustomElement from '@enhance-labs/custom-element'
+
+export default class LayoutContainer extends CustomElement {
+  constructor() {
+    super()
+  }
+
+  render({ html, state }) {
+    return html`
     <style>
       :host {
         display: block;
@@ -25,5 +33,11 @@ export default function LayoutContainer({ html }) {
     <section>
       <slot></slot>
     </section>
-  `
+    `
+  }
+
 }
+
+export const render = LayoutContainer.prototype.render;
+
+customElements.define('layout-container', LayoutContainer)
