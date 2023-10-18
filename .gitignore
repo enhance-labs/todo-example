@@ -15,3 +15,5 @@ sam.json
 sam.yaml
 
 .DS_Store
+
+public/browser
