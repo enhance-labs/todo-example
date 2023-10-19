@@ -72,7 +72,13 @@ function destroyMutation({ todo={}, problems={} }) {
 }
 
 function listMutation({ todos=[], problems={} }) {
-  store.initialize({ todos, problems })
+  // For SSR we use initialize to avoid calling subscribed callbacks
+  // which would cause an unnecessary rerender
+  // store.initialize({ todos, problems })
+  // For CSR we directly set the store so that callbacks are called 
+  // to rerender with data
+  store.todos = todos
+  store.problems = problems
 }
 
 function processForm(form) {

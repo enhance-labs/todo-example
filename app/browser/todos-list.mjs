@@ -39,10 +39,6 @@ export default class TodosList extends CustomElement {
     this.list = this.querySelector('ul')
   }
 
-  connectedCallback() {
-    setTimeout(()=>{this.storeChangedCallback(this.api.store)},1000)
-  }
-
   render({ html, state }) {
     const { store = {} } = state
     const { todos = [{ title: 'Edit this Todo.' }] } = store
