@@ -31,6 +31,7 @@ export default class LayoutContainer extends CustomElement {
       }
     </style>
     <section>
+      <slot name="info"></slot>
       <slot></slot>
     </section>
     `
