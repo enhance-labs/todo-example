@@ -10,7 +10,7 @@ const LIST    = 'list'
 let worker
 export default function API() {
   if (!worker) {
-    worker = new Worker('/_public/browser/worker.mjs')
+    worker = makeWorker(stateMachine)
     worker.onmessage = mutate
   }
 
@@ -119,3 +119,92 @@ function update (form) {
   })
 }
 
+// Web Worker for IndexedDB 
+ 
+function makeWorker(fn) {
+  var blob = new Blob(['self.onmessage = ', fn.toString()], { type: 'text/javascript' });
+  var url = URL.createObjectURL(blob);
+  return new Worker(url);
+}
+
+async function stateMachine ({ data }) {
+
+  await importScripts('https://cdn.jsdelivr.net/npm/idb@7/build/umd.js')
+  const db = await idb.openDB('Todos', 1, {
+    upgrade(db) {
+      const store = db.createObjectStore('todos', {
+        keyPath: 'key',
+        autoIncrement: true,
+      });
+    },
+  });
+
+  /* global self */
+  const CREATE  = 'create'
+  const UPDATE  = 'update'
+  const DESTROY = 'destroy'
+  const LIST    = 'list'
+
+  const { data: payload, type } = data
+  switch (type) {
+  case CREATE:
+    try {
+      const parsed = JSON.parse(payload)
+      const newItem = {...parsed, completed:false}
+      const resultKey = await db.put('todos', newItem)
+      const result = {...newItem, key:resultKey.toString()}
+      self.postMessage({
+        type: CREATE,
+        result:{todo:result}
+      })
+    }
+    catch (err) {
+      // RESPOND WITH ERROR
+      console.error(err)
+    }
+    break
+  case UPDATE:
+    try {
+      const parsed = JSON.parse(payload)
+      const newItem = {...parsed, completed:!!parsed.completed}
+      await db.put('todos', {...newItem, key:parseInt(newItem.key)})
+      self.postMessage({
+        type: UPDATE,
+        result:{todo:newItem}
+      })
+    }
+    catch (err) {
+      console.error(err)
+    }
+    break
+  case DESTROY:
+    try {
+      const stringKey = JSON.parse(payload).key
+      const intKey = parseInt(stringKey)
+      await db.delete('todos',intKey)
+      self.postMessage({
+        type: DESTROY,
+        result:stringKey
+      })
+    }
+    catch (err) {
+      // RESPOND WITH ERROR
+      console.error(err)
+    }
+    break
+  case LIST:
+    try {
+      const Items = await db.getAll('todos')
+      const result = Items.map(item=>{return{...item,key:item.key.toString()}})
+      self.postMessage({
+        type: LIST,
+        result:{todos:result}
+      })
+    }
+    catch (err) {
+      // RESPOND WITH ERROR
+      console.error(err)
+    }
+    break
+  }
+}
