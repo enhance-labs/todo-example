@@ -1,5 +1,6 @@
 /* global window, Worker */
 import Store from '@enhance/store'
+import { convertToNestedObject, formEncodingToSchema } from '@begin/validator'
 const store = Store()
 
 const CREATE  = 'create'
@@ -7,6 +8,20 @@ const UPDATE  = 'update'
 const DESTROY = 'destroy'
 const LIST    = 'list'
 
+// JSON Schema for Todos
+const schema = {
+  'id': 'todo',
+  'type': 'object',
+  'properties': {
+    'key': { 'type': 'integer' },
+    'completed': { 'type': 'boolean' },
+    'title': { 'type': 'string' },
+  }
+}
+// Store Key
+const Item = schema.id 
+const Items = `${schema.id}s`
+ 
 let worker
 export default function API() {
   if (!worker) {
@@ -83,8 +98,8 @@ function listMutation({ todos=[], problems={} }) {
 
 function processForm(form) {
   return JSON.stringify(
-    Object.fromEntries(
-      new FormData(form)
+    formEncodingToSchema(
+      convertToNestedObject(new FormData(form), Schema)
     )
   )
 }
