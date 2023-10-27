@@ -103,7 +103,7 @@ export default class TodosList extends CustomElement {
     const deletions = []
     items.forEach(item=> {
       const itemKey = item.getAttribute('id')
-      const found = todos.find(t => t.key === itemKey)
+      const found = todos.find(t => t.key.toString() === itemKey)
       if (!found) {
         deletions.push(item)
       }

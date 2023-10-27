@@ -1,36 +1,38 @@
-/* global window, Worker, url */
+/* global window, Worker */
 import Store from '@enhance/store'
 // dependencies below are vendored at the bottom of this file but will be imported eventually.
 // import { convertToNestedObject, formEncodingToSchema } from '@begin/validator'
-const store = Store()
 
 const notifyOnInitialize = true // false SSR because markup has initial data
 
-// JSON Schema for Todos
+// JSON Schema for DB/CRUD Object
 const Schema = {
-  'id': 'todo',
-  'type': 'object',
-  'properties': {
-    'key': { 'type': 'string' },
-    'completed': { 'type': 'boolean' },
-    'title': { 'type': 'string' },
+  id: 'todo',
+  type: 'object',
+  properties: {
+    key: { 'type': 'integer' },
+    completed: { 'type': 'boolean' },
+    title: { 'type': 'string' },
   }
 }
 
 
+// API actions
 const  CREATE  = 'create'
 const  UPDATE  = 'update'
 const  DESTROY = 'destroy'
 const  LIST    = 'list'
-// Store Key
+
+// DB/CRUD Object Type
 const  ITEM = Schema.id 
 const  ITEMS = `${Schema.id}s`
 
-
+const store = Store()
  
 let worker
-
 export default function API() {
+
+  // Create and setup Worker for Backend or Database interaction
   if (!worker) {
     const workerConstants = `
       const CREATE = '${CREATE}'
@@ -178,7 +180,7 @@ async function stateMachine ({ data }) {
     try {
       const item = JSON.parse(payload)
       const resultKey = await db.put(dbStoreName, item)
-      const result = {...item, key:resultKey.toString()}
+      const result = {...item, key:resultKey}
       self.postMessage({
         type: CREATE,
         result:{[ITEM]:result}
@@ -193,10 +195,9 @@ async function stateMachine ({ data }) {
     try {
       const item = JSON.parse(payload)
       await db.put(dbStoreName, item)
-      const result = {...item, key:item.key.toString()}
       self.postMessage({
         type: UPDATE,
-        result:{[ITEM]:result}
+        result:{[ITEM]:item}
       })
     }
     catch (err) {
@@ -220,10 +221,10 @@ async function stateMachine ({ data }) {
   case LIST:
     try {
       const items = await db.getAll(dbStoreName)
-      const results = items.map(item => ({...item, key:item.key.toString()}))
+      // const results = items.map(item => ({...item, key:item.key.toString()}))
       self.postMessage({
         type: LIST,
-        result:{[ITEMS]:results}
+        result:{[ITEMS]:items}
       })
     }
     catch (err) {
