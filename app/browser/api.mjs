@@ -221,7 +221,6 @@ async function stateMachine ({ data }) {
   case LIST:
     try {
       const items = await db.getAll(dbStoreName)
-      // const results = items.map(item => ({...item, key:item.key.toString()}))
       self.postMessage({
         type: LIST,
         result:{[ITEMS]:items}
