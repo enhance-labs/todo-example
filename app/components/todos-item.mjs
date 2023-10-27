@@ -2,7 +2,7 @@
 /* globals customElements */
 import CustomElement from '@enhance-labs/custom-element'
 import MorphdomMixin from '@enhance/morphdom-mixin'
-import API from './api.mjs'
+import API from '../browser/api.mjs'
 const api = API()
 
 export default class TodosItem extends MorphdomMixin(CustomElement) {
@@ -141,7 +141,5 @@ export default class TodosItem extends MorphdomMixin(CustomElement) {
   `
   }
 }
-
-export const render = TodosItem.prototype.render;
 
 customElements.define('todos-item', TodosItem)

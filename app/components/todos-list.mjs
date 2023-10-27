@@ -1,6 +1,6 @@
 /* globals customElements */
 import CustomElement from '@enhance-labs/custom-element'
-import API from './api.mjs'
+import API from '../browser/api.mjs'
 const api = API()
 
 function nodeFromString(str) {
@@ -113,7 +113,5 @@ export default class TodosList extends CustomElement {
     deletions.length = 0
   }
 }
-
-export const render = TodosList.prototype.render;
 
 customElements.define('todos-list', TodosList)

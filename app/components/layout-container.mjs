@@ -39,6 +39,4 @@ export default class LayoutContainer extends CustomElement {
 
 }
 
-export const render = LayoutContainer.prototype.render;
-
 customElements.define('layout-container', LayoutContainer)

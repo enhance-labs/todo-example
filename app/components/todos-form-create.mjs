@@ -1,6 +1,6 @@
 /* globals customElements */
 import CustomElement from '@enhance-labs/custom-element'
-import API from './api.mjs'
+import API from '../browser/api.mjs'
 const api = API()
 
 export default class TodosFormCreate extends CustomElement {
@@ -108,7 +108,5 @@ overflow-hidden
     this.resetForm()
   }
 }
-
-export const render = TodosFormCreate.prototype.render;
 
 customElements.define('todos-form-create', TodosFormCreate )
