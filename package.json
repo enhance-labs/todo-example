@@ -36,7 +36,7 @@
     }
   },
   "dependencies": {
-    "@begin/validator": "^0.1.0",
+    "@begin/validator": "^1.0.1",
     "@enhance-labs/arc-plugin-enhance": "^6.2.5-beta.4",
     "@enhance-labs/custom-element": "^1.0.2-beta.11",
     "@enhance/morphdom-mixin": "^1.1.1",
